@@ -4,6 +4,7 @@
 - [x] Database setup
 - [ ] Backend
     - [ ] Routes
+        - [x] User Authentication
         - [ ] Users
             - [ ] POST: Create new user
             - [ ] GET: All users list
@@ -11,9 +12,9 @@
             - [ ] PUT: Edit user by id
             - [ ] DELETE: Delete user by id
 - [ ] Frontend
-    - [ ] Login Screen component
+    - [x] Login Screen component
     - [ ] Main Screen component
-        - [ ] Route protection
+        - [x] Route protection
         - [ ] Header component
         - [ ] Sidebar component
         - [ ] Content component
@@ -34,7 +35,6 @@ project-dir/
 │
 ├── app/               # Express backend
 │   ├── controllers/   # Route controllers
-│   ├── middleware/    # Custom middleware
 │   ├── routes/        # API routes
 │   ├── services/      # 
 │   └── app.js         # Main server file
@@ -42,7 +42,6 @@ project-dir/
 ├── database/          # PostgreSQL files
 │   ├── migrations/    # Database migrations
 │   ├── seeds/         # Seed data
-│   ├── queries/       # SQL queries
 │   └── setup.sh       # Script to setup the database
 │
 ├── .env               # Environment variables
