@@ -9,21 +9,30 @@ import {
   Container,
   Paper,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  InputAdornment,
+  IconButton
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false); // New state for error
+  const [error, setError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { login } = useAuth();
   const navigate = useNavigate();
-  
+
+  // Toggle password visibility
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError(false); // Reset error state on new submission
+    setError(false);
         
     const payload = {
       username: username.trim(),
@@ -40,19 +49,19 @@ const LoginPage = () => {
         });
 
         if (!response.ok) {
-            setError(true); // Set error state if login fails
+            setError(true);
             throw new Error('Invalid username or password');
         }
 
-        const data = await response.json(); // Don't forget to parse the response
-        localStorage.setItem('authToken', data.token); // Store token properly
+        const data = await response.json();
+        localStorage.setItem('authToken', data.token);
         localStorage.setItem('loggedUser', username);
-        login(data.user); // Pass user data to auth context
+        login(data.user);
         navigate('/main');
 
     } catch (error) {
         console.error(error);
-        setError(true); // Set error state on any error
+        setError(true);
     }
   };
 
@@ -111,7 +120,7 @@ const LoginPage = () => {
             onChange={(e) => setUsername(e.target.value)}
             required
             fullWidth
-            error={error} // Add error prop
+            error={error}
             sx={{
               '& .MuiOutlinedInput-root': {
                 backgroundColor: 'white',
@@ -132,13 +141,26 @@ const LoginPage = () => {
 
           <TextField
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'} // Toggle between text and password
             variant="outlined"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             fullWidth
-            error={error} // Add error prop
+            error={error}
+            InputProps={{ // Add eye icon toggle
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 backgroundColor: 'white',
