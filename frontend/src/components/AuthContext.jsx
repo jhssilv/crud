@@ -1,24 +1,68 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-
- //            AUTH CONTEXT          \\
-// Used for storing the login context \\
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [authState, setAuthState] = useState({
+        isAuthenticated: false,
+        user: null,
+        token: null
+    });
 
-    const login = () => {
-        setIsAuthenticated(true);
-    };
+    // Initialize auth state from localStorage
+    useEffect(() => {
+        const initializeAuth = () => {
+            const token = localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (token && user) {
+                setAuthState({
+                    isAuthenticated: true,
+                    user,
+                    token
+                });
+            }
+        };
+        
+        initializeAuth();
+    }, []);
 
-    const logout = () => {
-        setIsAuthenticated(false);
-    };
+    const login = useCallback((userData, token) => {
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        setAuthState({
+            isAuthenticated: true,
+            user: userData,
+            token
+        });
+    }, []);
+
+    const logout = useCallback(() => {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        
+        setAuthState({
+            isAuthenticated: false,
+            user: null,
+            token: null
+        });
+    }, []);
+
+    const isAdmin = useCallback(() => {
+        return authState.user?.is_admin || false;
+    }, [authState.user]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{
+            isAuthenticated: authState.isAuthenticated,
+            user: authState.user,
+            token: authState.token,
+            login,
+            logout,
+            isAdmin: isAdmin()
+        }}>
             {children}
         </AuthContext.Provider>
     );
