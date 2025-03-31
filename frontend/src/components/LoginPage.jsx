@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { useAuth } from './functions/useAuth.jsx';
 import { useNavigate } from 'react-router-dom';
-
 import { 
   Box,
   Typography,
@@ -17,6 +15,7 @@ import {
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(false); // New state for error
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { login } = useAuth();
@@ -24,6 +23,7 @@ const LoginPage = () => {
   
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setError(false); // Reset error state on new submission
         
     const payload = {
       username: username.trim(),
@@ -40,18 +40,21 @@ const LoginPage = () => {
         });
 
         if (!response.ok) {
+            setError(true); // Set error state if login fails
             throw new Error('Invalid username or password');
         }
 
+        const data = await response.json(); // Don't forget to parse the response
+        localStorage.setItem('authToken', data.token); // Store token properly
         localStorage.setItem('loggedUser', username);
-        console.log('Olá ', username);
-        login();
+        login(data.user); // Pass user data to auth context
         navigate('/main');
 
     } catch (error) {
         console.error(error);
+        setError(true); // Set error state on any error
     }
-};
+  };
 
   return (
     <Container 
@@ -95,6 +98,12 @@ const LoginPage = () => {
             Login Page
           </Typography>
 
+          {error && (
+            <Typography color="error" align="center">
+              Invalid username or password
+            </Typography>
+          )}
+
           <TextField
             label="Username"
             variant="outlined"
@@ -102,25 +111,26 @@ const LoginPage = () => {
             onChange={(e) => setUsername(e.target.value)}
             required
             fullWidth
+            error={error} // Add error prop
             sx={{
-                '& .MuiOutlinedInput-root': {
+              '& .MuiOutlinedInput-root': {
                 backgroundColor: 'white',
                 '&.Mui-focused fieldset': {
-                    borderColor: theme.palette.primary.main,
+                  borderColor: error ? theme.palette.error.main : theme.palette.primary.main,
                 },
-                },
+              },
             }}
             InputLabelProps={{
-                sx: {
-                color: 'text.secondary',
+              sx: {
+                color: error ? 'error.main' : 'text.secondary',
                 '&.Mui-focused': {
-                    color: theme.palette.primary.main,
+                  color: error ? theme.palette.error.main : theme.palette.primary.main,
                 },
-                },
+              },
             }}
-            />
+          />
 
-            <TextField
+          <TextField
             label="Password"
             type="password"
             variant="outlined"
@@ -128,24 +138,25 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
             fullWidth
+            error={error} // Add error prop
             sx={{
-                '& .MuiOutlinedInput-root': {
+              '& .MuiOutlinedInput-root': {
                 backgroundColor: 'white',
                 '&.Mui-focused fieldset': {
-                    borderColor: theme.palette.primary.main,
+                  borderColor: error ? theme.palette.error.main : theme.palette.primary.main,
                 },
-                },
-                mt: 2,
+              },
+              mt: 2,
             }}
             InputLabelProps={{
-                sx: {
-                color: 'text.secondary',
+              sx: {
+                color: error ? 'error.main' : 'text.secondary',
                 '&.Mui-focused': {
-                    color: theme.palette.primary.main,
+                  color: error ? theme.palette.error.main : theme.palette.primary.main,
                 },
-                },
+              },
             }}
-            />
+          />
 
           {/* Submit Button */}
           <Button
