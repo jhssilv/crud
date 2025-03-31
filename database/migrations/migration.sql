@@ -30,7 +30,12 @@ BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
--- Down migration (reverts the changes)
-DROP TRIGGER IF EXISTS update_users_updated_at ON users;
-DROP FUNCTION IF EXISTS update_updated_at_column;
-DROP TABLE IF EXISTS users;
+-- Security for passwords
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+
+-- Down migration (reverts the changes) --
+-- DROP EXTENSION IF EXISTS pgcrypto;
+-- DROP TRIGGER IF EXISTS update_users_updated_at ON users;
+-- DROP FUNCTION IF EXISTS update_updated_at_column;
+-- DROP TABLE IF EXISTS users;

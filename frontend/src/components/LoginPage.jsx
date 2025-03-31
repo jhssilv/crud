@@ -1,5 +1,8 @@
 
 import React, { useState } from 'react';
+import { useAuth } from './functions/useAuth.jsx';
+import { useNavigate } from 'react-router-dom';
+
 import { 
   Box,
   Typography,
@@ -16,12 +19,39 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+        
+    const payload = {
+      username: username.trim(),
+      password: password.trim(),
+    };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your login logic here
-    console.log('Login attempted with:', { username, password });
-  };
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error('Invalid username or password');
+        }
+
+        localStorage.setItem('loggedUser', username);
+        console.log('Olá ', username);
+        login();
+        navigate('/main');
+
+    } catch (error) {
+        console.error(error);
+    }
+};
 
   return (
     <Container 
@@ -74,15 +104,14 @@ const LoginPage = () => {
             fullWidth
             sx={{
                 '& .MuiOutlinedInput-root': {
-                backgroundColor: 'white', // White background
+                backgroundColor: 'white',
                 '&.Mui-focused fieldset': {
-                    borderColor: theme.palette.primary.main, // Focused border color
+                    borderColor: theme.palette.primary.main,
                 },
                 },
             }}
             InputLabelProps={{
                 sx: {
-                // Label color states
                 color: 'text.secondary',
                 '&.Mui-focused': {
                     color: theme.palette.primary.main,
@@ -106,7 +135,7 @@ const LoginPage = () => {
                     borderColor: theme.palette.primary.main,
                 },
                 },
-                mt: 2, // Add some margin between fields
+                mt: 2,
             }}
             InputLabelProps={{
                 sx: {
