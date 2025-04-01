@@ -15,9 +15,10 @@
     - [x] Login Screen component
     - [ ] Main Screen component
         - [x] Route protection
-        - [ ] Header component
-        - [ ] Sidebar component
+        - [x] Header component
+        - [x] Sidebar component
         - [ ] Content component
+            - [ ] Home component
             - [ ] User list component
             - [ ] Register component
 

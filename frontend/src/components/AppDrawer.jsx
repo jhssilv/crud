@@ -4,10 +4,10 @@ import { Home as HomeIcon, People as PeopleIcon, Logout as LogoutIcon } from '@m
 import { useAuth } from './functions/useAuth';
 import { useNavigate } from 'react-router-dom';
 
-const AppDrawer = ({ open, onClose, isMobile }) => {
+const AppDrawer = ({ open, onClose, isMobile, setSelectedScreen }) => {
   const { logout } = useAuth();
-  const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     if (isMobile) onClose();
@@ -21,8 +21,8 @@ const AppDrawer = ({ open, onClose, isMobile }) => {
   };
 
   const menuItems = [
-    { text: 'Home', icon: <HomeIcon />, action: () => navigate('/main') },
-    { text: 'Users', icon: <PeopleIcon />, action: () => navigate('/main') },
+    { text: 'Home', icon: <HomeIcon />, action: () => setSelectedScreen(0)},
+    { text: 'Users', icon: <PeopleIcon />, action: () => setSelectedScreen(1)},
     { text: 'Logout', icon: <LogoutIcon />, action: handleLogout },
   ];
 

@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Box, CssBaseline, useTheme, useMediaQuery } from '@mui/material';
 import AppHeader from './AppHeader';
 import AppDrawer from './AppDrawer';
-// import UserManagement from './UserManagement';
+import HomeScreen from './HomeScreen';
+import UsersScreen from './UsersScreen';
 
 const MainPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [selectedScreen, setSelectedScreen] = useState(0)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -22,7 +24,8 @@ const MainPage = () => {
         <AppDrawer 
           open={mobileOpen} 
           onClose={handleDrawerToggle} 
-          isMobile={isMobile} 
+          isMobile={isMobile}
+          setSelectedScreen={setSelectedScreen}
         />
         
         <Box
@@ -34,7 +37,7 @@ const MainPage = () => {
             marginLeft: { sm: '240px' },
           }}
         >
-          
+          {selectedScreen === 0 ? <HomeScreen /> : <UsersScreen />}
         </Box>
       </Box>
     </Box>
