@@ -2,6 +2,7 @@
 
 ## TODO
 - [x] Database setup
+- [ ] Token validation logic
 - [ ] Backend
     - [ ] Routes
         - [x] User Authentication

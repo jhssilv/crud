@@ -13,10 +13,6 @@ const morgan = require('morgan');
 // Database Initialization
 const { pool } = require('./services/databaseConfig');
 
-// User authentication
-const bodyParser = require('body-parser');
-const userAuthRoutes = require('./routes/userAuth');
-
 const app = express();
 
 // =============================================
@@ -49,8 +45,12 @@ if (process.env.NODE_ENV !== 'test') {
 // =============================================
 // 3. API Routes
 // =============================================
-app.use('/api/auth', userAuthRoutes);
-
+// User authentication
+app.use('/api/auth', require('./routes/userAuth'));
+// Users route 
+// GET = Fetch all users, POST = Create a new user
+// PUT = Edits an user, DELETE = Deletes an user
+app.use('/api/users', require('./routes/users'));
 
 // =============================================
 // 4. Error Handling

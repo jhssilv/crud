@@ -6,8 +6,8 @@ source ../.env
 set +a
 
 # Run migrations
-for file in migrations/*.sql; do
-  echo "Running migration: $file"
+for file in setup.sql; do
+  echo "Running db setup: $file"
   psql -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" -f "$file"
 done
 

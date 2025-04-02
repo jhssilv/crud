@@ -27,7 +27,7 @@ const AppDrawer = ({ open, onClose, isMobile, setSelectedScreen }) => {
   ];
 
   return (
-    <Box component="nav" sx={{ width: { sm: 240 }, flexShrink: { sm: 0 } }}>
+    <Box component="nav" sx={{ width: { sm: 240 }, flexShrink: { sm: 0 }}}>
       <Drawer
         variant={isMobile ? 'temporary' : 'permanent'}
         open={open}
@@ -37,7 +37,7 @@ const AppDrawer = ({ open, onClose, isMobile, setSelectedScreen }) => {
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: 240,
-            height: 'calc(100vh - 64px)',
+            height: 'calc(100vh)',
             top: 'auto',
             position: 'fixed'
           },

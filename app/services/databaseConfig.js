@@ -1,4 +1,4 @@
-// database/config.js
+
 const { Pool } = require('pg');
 require('dotenv').config({ path: `${__dirname}/../.env` });
 
