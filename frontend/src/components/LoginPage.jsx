@@ -24,15 +24,15 @@ const LoginPage = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const { login } = useAuth();
 	const navigate = useNavigate();
+	const token = localStorage.getItem('authToken');
 
 	// Maintain user in main page if authenticated
 	useEffect(() => {
-		const token = localStorage.getItem('authToken');
 		// TODO: token checking
 		if (token) {
 			navigate('/main');
 		}
-	}, [navigate]);
+	}, [navigate, token]);
 
 	// Toggle password visibility
 	const handleClickShowPassword = () => {
@@ -46,6 +46,7 @@ const LoginPage = () => {
 		const payload = {
 			email: email.trim(),
 			password: password.trim(),
+			token: token
 		};
 
 		try {
