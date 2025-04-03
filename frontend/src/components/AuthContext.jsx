@@ -10,16 +10,15 @@ export const AuthProvider = ({ children }) => {
         token: null
     });
 
-    // Initialize auth state from localStorage
     useEffect(() => {
         const initializeAuth = () => {
             const token = localStorage.getItem('authToken');
-            const user = JSON.parse(localStorage.getItem('user'));
+            const username = localStorage.getItem('username');
             
-            if (token && user) {
+            if (token && username) {
                 setAuthState({
                     isAuthenticated: true,
-                    user,
+                    user: { username },
                     token
                 });
             }
@@ -30,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = useCallback((userData, token) => {
         localStorage.setItem('authToken', token);
-        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('username', userData.username);
         
         setAuthState({
             isAuthenticated: true,
@@ -41,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = useCallback(() => {
         localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
+        localStorage.removeItem('username');
         
         setAuthState({
             isAuthenticated: false,

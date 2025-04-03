@@ -2,13 +2,13 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { query } = require('./databaseConfig'); 
 
-const authenticateUser = async (username, password) => {
+const authenticateUser = async (email, password) => {
   try {
     // 1. Get user from database
     const result = await query(
       `SELECT id, name, email, user_password, is_admin, created_at, updated_at
-       FROM users WHERE name = $1 AND deleted_at IS NULL LIMIT 1`,
-      [username.trim()]
+       FROM users WHERE email = $1 AND deleted_at IS NULL LIMIT 1`,
+      [email.trim()]
     );
     
     const user = result.rows[0];

@@ -12,7 +12,7 @@ import {
   Alert
 } from '@mui/material';
 
-const UserFormDialog = ({ open, onClose, onSubmit }) => {
+const UserFormDialog = ({ open, setIsDialogOpen, onSubmit }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -50,14 +50,25 @@ const UserFormDialog = ({ open, onClose, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (!validate()) return;
 
     try {
       await onSubmit(formData);
-      onClose();
     } catch (error) {
       setSubmitError(error.message || 'Failed to create user');
     }
+  };
+
+  const onClose = () => {
+    setIsDialogOpen(false);
+    // Reset form values
+    setFormData({
+      name: '',
+      email: '',
+      password: '',
+      is_admin: false
+    });
   };
 
   return (

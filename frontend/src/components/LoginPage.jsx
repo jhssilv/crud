@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from './functions/useAuth.jsx';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -16,7 +16,7 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const LoginPage = () => {
-	const [username, setUsername] = useState('');
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
@@ -24,6 +24,15 @@ const LoginPage = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const { login } = useAuth();
 	const navigate = useNavigate();
+
+	// Maintain user in main page if authenticated
+	useEffect(() => {
+		const token = localStorage.getItem('authToken');
+		// TODO: token checking
+		if (token) {
+			navigate('/main');
+		}
+	}, [navigate]);
 
 	// Toggle password visibility
 	const handleClickShowPassword = () => {
@@ -35,7 +44,7 @@ const LoginPage = () => {
 		setError(false);
 
 		const payload = {
-			username: username.trim(),
+			email: email.trim(),
 			password: password.trim(),
 		};
 
@@ -54,9 +63,7 @@ const LoginPage = () => {
 			}
 
 			const data = await response.json();
-			localStorage.setItem('authToken', data.token);
-			localStorage.setItem('loggedUser', username);
-			login(data.user);
+			login(data.user, data.token);
 			navigate('/main');
 
 		} catch (error) {
@@ -114,10 +121,10 @@ const LoginPage = () => {
 					)}
 
 					<TextField
-						label="Username"
+						label="Email"
 						variant="outlined"
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
 						required
 						fullWidth
 						error={error}

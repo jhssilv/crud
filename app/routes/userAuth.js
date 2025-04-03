@@ -3,11 +3,11 @@ const router = express.Router();
 const { authenticateUser, generateToken } = require('../services/authService');
 
 router.post('/', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   
   try {
     // 1. Authenticate user
-    const user = await authenticateUser(username, password);
+    const user = await authenticateUser(email, password);
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
