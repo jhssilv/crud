@@ -12,7 +12,7 @@ CREATE TABLE users (
   user_password varchar(255) NOT NULL,
   is_admin bool NOT NULL DEFAULT false,
   deleted_at timestamptz NULL,
-  confirmacao varchar(255) NULL,
+  token varchar(255) NULL,
   date_expired timestamp(0) NULL,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
