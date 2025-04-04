@@ -5,7 +5,7 @@ set -a
 source ../.env
 set +a
 
-# Run migrations
+# Run migration
 for file in setup.sql; do
   echo "Running db setup: $file"
   psql -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" -f "$file"
