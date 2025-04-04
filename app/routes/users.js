@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
     try {
         // Get page number from query params, default to 1 if not provided
         const page = parseInt(req.query.page) || 1;
-        const usersPerPage = 20;
+        const usersPerPage = 5;
         const offset = (page - 1) * usersPerPage;
 
         // 1. Get paginated users from database
@@ -161,7 +161,7 @@ router.put('/:id', async (req, res) => {
         console.log(id);
 
         // 1. Input validation
-        if (!name || !email || !password || is_admin === undefined) {
+        if (!name || !email || is_admin === undefined) {
             return res.status(400).json({
                 message: 'No fields to update',
                 required: ['At least one of: name, email, password, is_admin'],

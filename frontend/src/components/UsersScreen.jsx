@@ -27,7 +27,7 @@ const UsersScreen = () => {
     page: 0,
     totalPages: 1,
     totalUsers: 0,
-    usersPerPage: 20
+    usersPerPage: 5
   });
   const [userData, setUserData] = useState({
     id: null,
@@ -67,7 +67,7 @@ const UsersScreen = () => {
         page,
         totalPages: data.data.pagination.total_pages,
         totalUsers: data.data.pagination.total_users,
-        usersPerPage: 20
+        usersPerPage: 5
       });
     } catch (err) {
       setError(err.message);
