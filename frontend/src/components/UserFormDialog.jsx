@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -12,8 +12,15 @@ import {
   Alert
 } from '@mui/material';
 
-const UserFormDialog = ({ open, setIsDialogOpen, onSubmit }) => {
+const UserFormDialog = ({ 
+  open, 
+  setIsDialogOpen, 
+  handleCreateUser,
+  handleEditUser,
+  userData
+}) => {
   const [formData, setFormData] = useState({
+    id: null,
     name: '',
     email: '',
     password: '',
@@ -21,6 +28,31 @@ const UserFormDialog = ({ open, setIsDialogOpen, onSubmit }) => {
   });
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
+
+  // Reset form when userData changes
+  useEffect(() => {
+    if (userData) {
+      // Edit mode - populate fields except password
+      setFormData({
+        id: userData.id,
+        name: userData.name,
+        email: userData.email,
+        password: '', // Don't show existing password
+        is_admin: userData.is_admin
+      });
+    } else {
+      // Create mode - reset form
+      setFormData({
+        id: null,
+        name: '',
+        email: '',
+        password: '',
+        is_admin: false
+      });
+    }
+    setErrors({});
+    setSubmitError('');
+  }, [userData, open]); // Reset when userData or open changes
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
@@ -38,12 +70,12 @@ const UserFormDialog = ({ open, setIsDialogOpen, onSubmit }) => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Invalid email format';
     }
-    if (!formData.password) {
+    // Only validate password for new users
+    if (!formData.id && !formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
+    } else if (!formData.id && formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -54,26 +86,24 @@ const UserFormDialog = ({ open, setIsDialogOpen, onSubmit }) => {
     if (!validate()) return;
 
     try {
-      await onSubmit(formData);
+      if (formData.id) {
+        await handleEditUser(formData);
+      } else {
+        await handleCreateUser(formData);
+      }
+      setIsDialogOpen(false); // Close on success
     } catch (error) {
-      setSubmitError(error.message || 'Failed to create user');
+      setSubmitError(error.message || 'Failed to submit user');
     }
   };
 
   const onClose = () => {
     setIsDialogOpen(false);
-    // Reset form values
-    setFormData({
-      name: '',
-      email: '',
-      password: '',
-      is_admin: false
-    });
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Create New User</DialogTitle>
+      <DialogTitle>{formData.id ? 'Edit User' : 'Create New User'}</DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 2 }}>
           {submitError && <Alert severity="error">{submitError}</Alert>}
@@ -109,6 +139,7 @@ const UserFormDialog = ({ open, setIsDialogOpen, onSubmit }) => {
             error={!!errors.password}
             helperText={errors.password}
           />
+
           
           <FormControlLabel
             control={
@@ -125,7 +156,7 @@ const UserFormDialog = ({ open, setIsDialogOpen, onSubmit }) => {
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleSubmit} variant="contained" color="primary">
-          Create User
+          Submit
         </Button>
       </DialogActions>
     </Dialog>

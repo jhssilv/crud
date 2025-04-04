@@ -29,6 +29,13 @@ const UsersScreen = () => {
     totalUsers: 0,
     usersPerPage: 20
   });
+  const [userData, setUserData] = useState({
+    id: null,
+    name: '',
+    email: '',
+    password: '',
+    is_admin: false
+  })
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -94,7 +101,7 @@ const UsersScreen = () => {
 
   const handleEditUser = async (userData) => {
     try {
-      const response = await fetch(`/api/users/${userData}`, {
+      const response = await fetch(`/api/users/${userData.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +151,14 @@ const UsersScreen = () => {
     fetchUsers(newPage);
   };
 
-  const handleNewUser = () => {
+  const openEditDialog = (selectedUser) => {
+    setUserData(selectedUser);
+    console.log(selectedUser);
+    setIsDialogOpen(true);
+  };
+
+  const openNewUserDialog = () => {
+    setUserData(null);
     setIsDialogOpen(true);
   };
 
@@ -178,7 +192,7 @@ const UsersScreen = () => {
           <Tooltip title="Add new user">
             <IconButton 
               color="primary" 
-              onClick={handleNewUser} 
+              onClick={openNewUserDialog} 
               size="large"
               disabled={!isAdmin}
             >
@@ -189,7 +203,7 @@ const UsersScreen = () => {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={handleNewUser}
+            onClick={openNewUserDialog}
             size={isMediumScreen ? "medium" : "large"}
             disabled={!isAdmin}
           >
@@ -201,7 +215,7 @@ const UsersScreen = () => {
       <UsersTable
         users={users}
         isAdmin={isAdmin}
-        onEdit={handleEditUser}
+        onEdit={openEditDialog}
         onDelete={handleDeleteUser}
         loading={loading}
       />
@@ -229,7 +243,9 @@ const UsersScreen = () => {
       <UserFormDialog
         open={isDialogOpen}
         setIsDialogOpen={setIsDialogOpen}
-        onSubmit={handleCreateUser}
+        handleCreateUser={handleCreateUser}
+        handleEditUser={handleEditUser}
+        userData={userData}
       />
     </Container>
   );

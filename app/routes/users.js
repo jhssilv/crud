@@ -156,10 +156,12 @@ router.delete('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, password, is_admin } = req.body;
+        const { name, email, is_admin, password } = req.body;
+
+        console.log(id);
 
         // 1. Input validation
-        if (!name && !email && !password && is_admin === undefined) {
+        if (!name || !email || !password || is_admin === undefined) {
             return res.status(400).json({
                 message: 'No fields to update',
                 required: ['At least one of: name, email, password, is_admin'],
