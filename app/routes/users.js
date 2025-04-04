@@ -257,36 +257,4 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        // 1. Gets the user info for token validation
-        const getUser = await query(
-            `SELECT id, token, expired_at FROM users WHERE id = $1`,
-            [id]
-        );
-
-        // 2. Successful response
-        res.status(200).json({
-            message: 'User updated successfully',
-            user: result.rows[0],
-            links: {
-                view: `/api/users/${result.rows[0].id}`,
-                all_users: '/api/users'
-            }
-        });
-
-    } catch (error) {
-        console.error('Error getting user:', error);
-        res.status(500).json({
-            message: 'Internal server error',
-            error: process.env.NODE_ENV === 'development' ? {
-                message: error.message,
-                stack: error.stack
-            } : undefined
-        });
-    }
-});
-
 module.exports = router;
