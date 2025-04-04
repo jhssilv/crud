@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from './functions/useAuth.jsx';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -24,15 +24,6 @@ const LoginPage = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const { login } = useAuth();
 	const navigate = useNavigate();
-	const token = localStorage.getItem('authToken');
-
-	// Maintain user in main page if authenticated
-	useEffect(() => {
-		// TODO: token checking
-		if (token) {
-			navigate('/main');
-		}
-	}, [navigate, token]);
 
 	// Toggle password visibility
 	const handleClickShowPassword = () => {
@@ -46,7 +37,6 @@ const LoginPage = () => {
 		const payload = {
 			email: email.trim(),
 			password: password.trim(),
-			token: token
 		};
 
 		try {

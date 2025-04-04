@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { query } = require('../services/databaseConfig'); 
+const { query } = require('../services/databaseConfig');
+
+const validateToken = require('../middleware/validateToken');
+router.use(validateToken);
 
 router.get('/', async (req, res) => {
     try {

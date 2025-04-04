@@ -1,3 +1,4 @@
+DROP FUNCTION IF EXISTS update_token_expiration;
 DROP EXTENSION IF EXISTS pgcrypto;
 DROP TRIGGER IF EXISTS update_users_updated_at ON users;
 DROP FUNCTION IF EXISTS update_updated_at_column;
@@ -34,6 +35,23 @@ CREATE TRIGGER update_users_updated_at
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
+
+-- Sets token expiration 1h after the token has been updated
+CREATE OR REPLACE FUNCTION set_token_expiration()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Only update date_expired if the token is being changed
+  IF NEW.token IS DISTINCT FROM OLD.token THEN
+    NEW.date_expired = CURRENT_TIMESTAMP + INTERVAL '1 hour';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_token_expiration_trigger
+BEFORE UPDATE OF token ON users
+FOR EACH ROW
+EXECUTE FUNCTION set_token_expiration();
 
 -- Makes IDs sequential numbers
 CREATE SEQUENCE users_id_seq;

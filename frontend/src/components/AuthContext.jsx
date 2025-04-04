@@ -7,60 +7,43 @@ export const AuthProvider = ({ children }) => {
     const [authState, setAuthState] = useState({
         isAuthenticated: false,
         user: null,
-        token: null
+        token: null,
+        isAdmin: false
     });
-
-    useEffect(() => {
-        const initializeAuth = () => {
-            const token = localStorage.getItem('authToken');
-            const username = localStorage.getItem('username');
-            
-            if (token && username) {
-                setAuthState({
-                    isAuthenticated: true,
-                    user: { username },
-                    token
-                });
-            }
-        };
-        
-        initializeAuth();
-    }, []);
-
-    const login = useCallback((userData, token) => {
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('username', userData.username);
-        
-        setAuthState({
-            isAuthenticated: true,
-            user: userData,
-            token
-        });
-    }, []);
 
     const logout = useCallback(() => {
         localStorage.removeItem('authToken');
-        localStorage.removeItem('username');
-        
+        localStorage.removeItem('userData');
+
         setAuthState({
             isAuthenticated: false,
             user: null,
-            token: null
+            token: null,
+            isAdmin: false
         });
     }, []);
 
-    const isAdmin = useCallback(() => {
-        return authState.user?.is_admin || false;
-    }, [authState.user]);
+    useEffect(() => {
+        logout();
+    }, [logout]);
+
+    const login = useCallback(async (userData, token) => {
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        setAuthState({
+            isAuthenticated: true,
+            username: userData.username,
+            token,
+            isAdmin: userData.isAdmin
+        });
+    }, []);
 
     return (
         <AuthContext.Provider value={{
-            isAuthenticated: authState.isAuthenticated,
-            user: authState.user,
-            token: authState.token,
+            ...authState,
             login,
             logout,
-            isAdmin: isAdmin()
         }}>
             {children}
         </AuthContext.Provider>

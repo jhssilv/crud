@@ -46,7 +46,8 @@ if (process.env.NODE_ENV !== 'test') {
 // 3. API Routes
 // =============================================
 // User authentication
-app.use('/api/auth', require('./routes/userAuth'));
+// POST = User authentication
+app.use('/api/auth', require('./routes/auth'));
 // Users route 
 // GET = Fetch all users, POST = Create a new user
 // PUT = Edits an user, DELETE = Deletes an user

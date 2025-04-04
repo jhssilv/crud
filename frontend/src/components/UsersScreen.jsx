@@ -34,17 +34,27 @@ const UsersScreen = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
   const username = localStorage.getItem('username');
-  const isAdmin = useAuth();
+  const {isAdmin, token} = useAuth();
 
   const fetchUsers = async (page = 0) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/users?page=${page + 1}`);
-
+      
+      const response = await fetch(`/api/users?page=${page + 1}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+  
       if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Unauthorized: Invalid or missing token');
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const data = await response.json();
       setUsers(data.data.users);
       setPagination({
@@ -56,6 +66,10 @@ const UsersScreen = () => {
     } catch (err) {
       setError(err.message);
       console.error('Fetch error:', err);
+      // Redirect to login if token is invalid
+      if (err.message.includes('Unauthorized')) {
+        window.location.href = '/login';
+      }
     } finally {
       setLoading(false);
     }
@@ -66,6 +80,7 @@ const UsersScreen = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(userData),
     });
@@ -86,7 +101,11 @@ const UsersScreen = () => {
   const handleDeleteUser = async (userId) => {
     try {
       const response = await fetch(`/api/users/${userId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
       });
 
       if (!response.ok) {
