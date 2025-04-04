@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Typography,
@@ -35,7 +35,7 @@ const UsersScreen = () => {
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
   const {isAdmin, token, username} = useAuth();
 
-  const fetchUsers = async (page = 0) => {
+  const fetchUsers = useCallback(async (page = 0) => {
     try {
       setLoading(true);
       
@@ -72,7 +72,7 @@ const UsersScreen = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   const handleCreateUser = async (userData) => {
     const response = await fetch('/api/users', {
@@ -92,9 +92,26 @@ const UsersScreen = () => {
     fetchUsers(pagination.page);
   };
 
-  const handleEditUser = (user) => {
-    // Implement edit functionality
-    console.log('Edit user:', user);
+  const handleEditUser = async (userData) => {
+    try {
+      const response = await fetch(`/api/users/${userData}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to edit user');
+      }
+
+      fetchUsers(pagination.page);
+    } catch (err) {
+      console.error('Edit error:', err);
+      setError(err.message);
+    }
   };
 
   const handleDeleteUser = async (userId) => {
@@ -121,7 +138,7 @@ const UsersScreen = () => {
 
   useEffect(() => {
     fetchUsers(0);
-  }, []);
+  }, [fetchUsers]);
 
   const handlePageChange = (event, newPage) => {
     fetchUsers(newPage);
