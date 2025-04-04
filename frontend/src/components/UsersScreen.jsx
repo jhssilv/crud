@@ -33,8 +33,7 @@ const UsersScreen = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const username = localStorage.getItem('username');
-  const {isAdmin, token} = useAuth();
+  const {isAdmin, token, username} = useAuth();
 
   const fetchUsers = async (page = 0) => {
     try {

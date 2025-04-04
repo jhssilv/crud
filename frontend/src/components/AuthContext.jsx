@@ -12,12 +12,10 @@ export const AuthProvider = ({ children }) => {
     });
 
     const logout = useCallback(() => {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userData');
 
         setAuthState({
             isAuthenticated: false,
-            user: null,
+            username: null,
             token: null,
             isAdmin: false
         });
@@ -28,8 +26,6 @@ export const AuthProvider = ({ children }) => {
     }, [logout]);
 
     const login = useCallback(async (userData, token) => {
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('userData', JSON.stringify(userData));
         
         setAuthState({
             isAuthenticated: true,
